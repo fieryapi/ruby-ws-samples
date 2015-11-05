@@ -1,0 +1,6 @@
+source 'http://rubygems.org'
+
+gem 'eventmachine'
+gem 'faye-websocket'
+gem 'json'
+gem 'rest-client'
