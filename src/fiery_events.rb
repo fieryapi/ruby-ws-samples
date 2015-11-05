@@ -16,16 +16,16 @@ require 'rest-client'
 ## *****************************************************************************
 
 # set the host name as fiery server name or ip address
-$hostname = '10.3.51.160'
+$hostname = 'the_server_name_or_ip_address'
 
 # set the key to access Fiery API
-$api_key = 'hscPvGULGj8dNgLUVGdObw2+TuFt6gEmDYNQ92mGPASxlInlXXVHiyDrnNCJg239+W5K6ow++Yr9tn3p+sJdCKEtDO8/rrT26QWrUXmzbswH1DmwrADnpMdXCSw0ZNBrrmHAtfUN0ARDd8trWCmk+9QvrLSfeqTPqGmyrdCk2idtZEl1C/o6B5mRQzeUNqUVdI0vBOVaPULW0QW1tT+MQN6JMDgXZRJm8lC4+HqXAr13vo8pQy/TbY9XaNCyZOMyUqxGftSWGHRzsZa3RL5lFMGtUufkqPpaP7w22dFYmiYkXI0vtYn7VsUr+5r/y7M0MVnw5GiqDwAJ0ce9QIbjHQ=='
+$api_key = 'the_api_key'
 
 # set the username to login to the fiery server
-$username = 'admin'
+$username = 'the_username'
 
 # set the password to login to the fiery server
-$password = 'Fiery.1'
+$password = 'the_password'
 
 # websocket object
 $ws = nil
