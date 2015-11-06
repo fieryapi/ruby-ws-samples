@@ -30,38 +30,40 @@ $password = 'the_password'
 # websocket object
 $ws = nil
 
+
 # login to the fiery server
-def login()
+def login
   login_json = {
     :username => $username,
     :password => $password,
     :accessrights => $api_key
   }
 
-  client = RestClient::Resource.new "https://#{$hostname}/live/api/v2/", :headers => {}, :verify_ssl => OpenSSL::SSL::VERIFY_NONE
+  client = RestClient::Resource.new("https://#{$hostname}/live/api/v2/", :headers => {}, :verify_ssl => OpenSSL::SSL::VERIFY_NONE)
 
   request = login_json.to_json
-  response = client['login'].post request, { :content_type => 'application/json' }
+  response = client['login'].post(request, {:content_type => 'application/json'})
 
   client.options[:headers][:cookies] = response.cookies
 
-  p ''
-  p 'Login'
-  p response
+  puts
+  puts 'Login'
+  puts response
   client
 end
 
 # logout from the fiery server
 def logout(client)
-  response = client['logout'].post nil
+  response = client['logout'].post(nil)
 
   client.options[:headers][:cookies] = response.cookies
 
-  p ''
-  p 'Logout'
-  p response
+  puts
+  puts 'Logout'
+  puts response
 end
 
+# receive events from fiery server
 def receive_fiery_events
   # login to fiery server
   client = login
@@ -79,11 +81,11 @@ def receive_fiery_events
   run_websocket(server_address, custom_headers)
 
   # logout from fiery server and close websocket connection
-  logout client
+  logout(client)
 end
 
+# set filters to receive only fiery status change events
 def receive_fiery_status_change_events
-
   puts
   puts "Scenario: Receive only Fiery status change events"
   puts "Press <Enter> when you want to run next scenario"
@@ -91,24 +93,25 @@ def receive_fiery_status_change_events
   # ignore all events except device
   $ws.send(
   {
-    "jsonrpc" => "2.0",
-    "method" => "ignore",
-    "params" => ["accounting", "job", "jobprogress", "preset", "property", "queue"],
-    "id" => 1
+    :jsonrpc => "2.0",
+    :method => :ignore,
+    :params => [:accounting, :job, :jobprogress, :preset, :property, :queue],
+    :id => 1
   }.to_json)
 
   # receive device events
   $ws.send(
   {
-    "jsonrpc" => "2.0",
-    "method" => "receive",
-    "params" => ["device"],
-    "id" => 2
+    :jsonrpc => "2.0",
+    :method => :receive,
+    :params => [:device],
+    :id => 2
   }.to_json)
 
   gets
 end
 
+# set filters to receive only job is printing? events
 def receive_job_is_printing_events
   puts
   puts "Scenario: Receive only job is printing? events"
@@ -117,38 +120,39 @@ def receive_job_is_printing_events
   # ignore all events except job events
   $ws.send(
   {
-    "jsonrpc" => "2.0",
-    "method" => "ignore",
-    "params" => ["accounting", "device", "jobprogress", "preset", "property", "queue"],
-    "id" => 1
+    :jsonrpc => "2.0",
+    :method => :ignore,
+    :params => [:accounting, :device, :jobprogress, :preset, :property, :queue],
+    :id => 1
   }.to_json)
 
   # receive job events
   $ws.send(
   {
-    "jsonrpc" => "2.0",
-    "method" => "receive",
-    "params" => ["job"],
-    "id" => 2
+    :jsonrpc => "2.0",
+    :method => :receive,
+    :params => [:job],
+    :id => 2
   }.to_json)
 
   # receive job events only if they contain <is printing?> key in the <attributes>
   $ws.send(
   {
-    "jsonrpc" => "2.0",
-    "method"  => "filter",
-    "params" =>
+    :jsonrpc => "2.0",
+    :method  => :filter,
+    :params =>
     {
-      "eventKind" => "job",
-      "mode" => "add",
-      "attr" => { "attributes" => ["is printing?"] }
+      :eventKind => :job,
+      :mode => :add,
+      :attr => { :attributes => ["is printing?"] }
     },
-    "id" => 3
+    :id => 3
   }.to_json)
 
   gets
 end
 
+# set filters in batch mode to receive only job is printing? events
 def receive_job_is_printing_events_in_batch_mode
   puts
   puts "Scenario: Receive only job is printing? events in batch mode"
@@ -158,37 +162,38 @@ def receive_job_is_printing_events_in_batch_mode
   [
     # ignore all events except job events
     {
-      "jsonrpc" => "2.0",
-      "method" => "ignore",
-      "params" => ["accounting", "device", "jobprogress", "preset", "property", "queue"],
-      "id" => 1
+      :jsonrpc => "2.0",
+      :method => :ignore,
+      :params => [:accounting, :device, :jobprogress, :preset, :property, :queue],
+      :id => 1
     },
 
     # receive job events
     {
-      "jsonrpc" => "2.0",
-      "method" => "receive",
-      "params" => ["job"],
-      "id" => 2
+      :jsonrpc => "2.0",
+      :method => :receive,
+      :params => [:job],
+      :id => 2
     },
 
     # receive job events only if they contain <is printing?> key in the <attributes>
     {
-      "jsonrpc" => "2.0",
-      "method"  => "filter",
-      "params" =>
+      :jsonrpc => "2.0",
+      :method  => :filter,
+      :params =>
       {
-        "eventKind" => "job",
-        "mode" => "add",
-        "attr" => { "attributes" => ["is printing?"] }
+        :eventKind => :job,
+        :mode => :add,
+        :attr => { :attributes => ["is printing?"] }
       },
-      "id" => 3
+      :id => 3
     }
   ].to_json)
 
   gets
 end
 
+# open websocket connection, set event listeners and receive fiery events
 def run_websocket(server_address, custom_headers)
   EM.run {
     $ws = Faye::WebSocket::Client.new(server_address, nil, :headers => custom_headers)
@@ -210,7 +215,7 @@ def run_websocket(server_address, custom_headers)
     end
 
     $ws.on :close do |event|
-      p [:close, event.code, event.reason, Time.now]
+      puts "websocket connection closed: #{event.code} #{event.reason}"
       EM::stop_event_loop
     end
   }

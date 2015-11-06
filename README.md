@@ -3,6 +3,7 @@
 Setup the bundler in `src` directory with `bundle install`, modify `fiery_events.rb` in the configuration section to connect to the Fiery then execute the script with `bundle exec ruby fiery_events.rb`
 
 The sample program runs three scenarios:
+
   * Receive only Fiery status change events
   * Receive only job is printing? events
   * Receive only job is printing? events in batch mode
