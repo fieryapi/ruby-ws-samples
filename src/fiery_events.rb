@@ -199,7 +199,7 @@ def run_websocket(server_address, custom_headers)
     $ws = Faye::WebSocket::Client.new(server_address, nil, :headers => custom_headers)
 
     $ws.on :open do |event|
-      puts "new websocket connection is established"
+      puts "new websocket connection is opened"
       EM.defer(
         proc do
           receive_fiery_status_change_events
@@ -211,6 +211,10 @@ def run_websocket(server_address, custom_headers)
     end
 
     $ws.on :message do |event|
+      puts event.data.to_json
+    end
+
+    $ws.on :error do |event|
       puts event.data.to_json
     end
 
