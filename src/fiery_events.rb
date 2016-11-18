@@ -39,7 +39,7 @@ def login
     :accessrights => $api_key
   }
 
-  client = RestClient::Resource.new("https://#{$hostname}/live/api/v2/", :headers => {}, :verify_ssl => OpenSSL::SSL::VERIFY_NONE)
+  client = RestClient::Resource.new("https://#{$hostname}/live/api/v3/", :headers => {}, :verify_ssl => OpenSSL::SSL::VERIFY_NONE)
 
   request = login_json.to_json
   response = client['login'].post(request, {:content_type => 'application/json'})
@@ -75,7 +75,7 @@ def receive_fiery_events
   custom_headers = {'cookie' => cookies.to_s.delete("\"{>}")}
 
   # set the websocket server address
-  server_address = "wss://#{$hostname}/live/api/v2/events"
+  server_address = "wss://#{$hostname}/live/api/v3/events"
 
   # establish websocket connection and receive fiery events
   run_websocket(server_address, custom_headers)
